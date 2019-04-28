@@ -54,7 +54,7 @@ La sentencia ejecutada nos devolverá un documento como este:
 
 Dicho punto corresponde a la siguiente figura:
 
-![Restaurante](https://github.com/fnaquira/mongodb-geospatial/blob/master/geospatial-single-point.png)
+![Restaurante](https://github.com/fnaquira/mongodb-geospatial/blob/master/geospatial-single-point.png?raw=true)
 
 Ahora veamos como luce un vecindario, es decir, un documento de **neighborhoods**
 
@@ -81,7 +81,7 @@ Dicho documento tiene un atributo coordenadas que definen los límites del vecin
 
 Lo cual luciría como una figura así:
 
-![Vecindario](https://github.com/fnaquira/mongodb-geospatial/blob/master/geospatial-polygon-hells-kitchen.png)
+![Vecindario](https://github.com/fnaquira/mongodb-geospatial/blob/master/geospatial-polygon-hells-kitchen.png?raw=true)
 
 # Encontrando el vecindario actual
 
@@ -127,7 +127,7 @@ db.restaurants.find( { location: { $geoWithin: { $geometry: neighborhood.geometr
 
 Esta sentencia nos retornará 127 restaurantes en el vecindario indicado, que pueden ser visualizados aquí:
 
-![Vecindario](https://github.com/fnaquira/mongodb-geospatial/blob/master/geospatial-all-restaurants.png)
+![Vecindario](https://github.com/fnaquira/mongodb-geospatial/blob/master/geospatial-all-restaurants.png?raw=true)
 
 # Encontrar restaurante dentro de cierta distancia
 
