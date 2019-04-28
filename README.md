@@ -53,6 +53,7 @@ La sentencia ejecutada nos devolverá un documento como este:
 ```
 
 Dicho punto corresponde a la siguiente figura:
+
 ![Restaurante](https://github.com/fnaquira/mongodb-geospatial/blob/master/geospatial-single-point.png)
 
 Ahora veamos como luce un vecindario, es decir, un documento de **neighborhoods**
@@ -79,6 +80,7 @@ Dicho documento tiene un atributo coordenadas que definen los límites del vecin
 ```
 
 Lo cual luciría como una figura así:
+
 ![Vecindario](https://github.com/fnaquira/mongodb-geospatial/blob/master/geospatial-polygon-hells-kitchen.png)
 
 # Encontrando el vecindario actual
@@ -115,3 +117,43 @@ El cual nos devolverá el vecindario donde nos encontramos:
 ```
 
 # Encontrando todos los restaurantes del vecindario
+
+Combinaremos la sentencia anterior y buscaremos todos los restaurantes que se encuentran en ese punto
+
+```
+var neighborhood = db.neighborhoods.findOne( { geometry: { $geoIntersects: { $geometry: { type: "Point", coordinates: [ -73.93414657, 40.82302903 ] } } } } )
+db.restaurants.find( { location: { $geoWithin: { $geometry: neighborhood.geometry } } } ).count()
+```
+
+Esta sentencia nos retornará 127 restaurantes en el vecindario indicado, que pueden ser visualizados aquí:
+
+![Vecindario](https://github.com/fnaquira/mongodb-geospatial/blob/master/geospatial-all-restaurants.png)
+
+# Encontrar restaurante dentro de cierta distancia
+
+para realizar esto, podemos utilizar dos métodos: **\$geoWithin** con **\$centerSphere** para obtener los resultados de forma desordenada, o **\$nearSphere** con **\$masDistance**
+
+## Desordenados con \$geoWithin
+
+Utilizaremos **\$geoWithin** y **\$centerSphere**, que denota una región circular especificando el centro y el radio en radianes.
+
+```
+db.restaurants.find({ location:
+   { $geoWithin:
+      { $centerSphere: [ [ -73.93414657, 40.82302903 ], 5 / 6378.1 ] } } })
+```
+
+El segundo argumento de \$centerSphere acepta el radio en radianes, por lo que debemos dividirlo por el radio de la tierra en kilómetros (el radio de la tierra en millas es de 3963.2).
+
+## Ordenados con \$nearSphere
+
+Ahora utilizaremos **nearSphere** para especificar una distancia máxima en metros. Esto retornará todos los restaurantes dentro de cinco kilómetros ordenados desde el más cercano al más lejano.
+
+```
+db.restaurants.find({ location: { $nearSphere: { $geometry: { type: "Point", coordinates: [ -73.93414657, 40.82302903 ] }, $maxDistance: 5 * 1000 } } })
+```
+
+# Conclusiones
+
+Como podemos ver, MongoDB nos permite hacer búsqueda muy potentes, sobre todo al momento de tener data geo espacial.
+Esto brinda una gran oportunidad si estamos desarrollando una aplicación que de recomendaciones al usuario según su ubicación ggeográfica.
